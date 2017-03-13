@@ -1,21 +1,24 @@
 USING: kernel http.client html.parser sequences assocs accessors command-line namespaces
-io.directories io.files.types io.pathnames sets vectors progress-bars math ;
+io.directories io.files.types io.pathnames sets vectors progress-bars math io formatting ;
 
 IN: rajdown
 
+! progress bar handling
 TUPLE: progress count total percent ;
-
 
 : <progress> ( count total -- progress ) 0 progress boa ;
 
-: progressStep ( seq progress -- progress seq ) swap [ count>> ] keep swap 1 + swap [ count<< ] keep ;
+: progressStep ( progress -- progress ) [ count>> ] keep [ 1 + ] dip [ count<< ] keep ;
 
-: initProgress ( seq -- progress seq ) [ length ] keep swap 0 swap <progress> swap ;
+: initProgress ( seq -- seq progress ) [ length ] keep swap 0 swap <progress> ;
 
 : setPercent ( progress -- progress )  [ count>> ] keep [ total>> ] keep [ / ] dip [ percent<< ] keep ;
 
-: drawProgressBar ( progress -- progress ) [ percent>> ] keep swap 90 make-progress-bar print ;
+: drawProgressBar ( progress -- progress ) [ percent>> ] keep swap 60 make-progress-bar "%s\r" printf ;
 
+: doProgressBar ( progress -- progress ) progressStep setPercent drawProgressBar ;
+
+! web part
 : isPhotoThumb ( elt -- ? ) "class" swap at "photoThumb" = ;
 
 : isLink ( elt -- ? ) name>> "a" = ;
@@ -28,8 +31,9 @@ TUPLE: progress count total percent ;
 
 : getPhotoAddresses ( seq -- seq ) [ attributes>> "href" swap at ] map ;
 
-: processAddresses ( seq -- ) [ download ] each ;
+: processAddresses ( seq -- ) initProgress drawProgressBar swap [ download doProgressBar ] each drop ;
 
+! local directory part
 : getDirectoryFiles (  -- seq ) "." directory-entries [ type>> +regular-file+ = ] filter ;
 
 : getDirectoryFileNames ( seq -- seq ) [ name>> ] map ;
@@ -41,7 +45,8 @@ TUPLE: progress count total percent ;
 : createLocalDirectoryVector ( url -- seq ) getDirectoryFiles getDirectoryFileNames prependUrlToFiles >vector ;
 
 : createRemoteDirectoryVector ( url -- seq ) downPage getLinks getPhotoLinks getPhotoAddresses ;
-    
+
+! working word
 : processUrl ( url -- ) createRemoteDirectoryVector  getPhotoUrlDirectory createLocalDirectoryVector
     diff
     processAddresses ;
