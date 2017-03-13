@@ -1,5 +1,6 @@
 USING: kernel http.client html.parser sequences assocs accessors command-line namespaces
-io.directories io.files.types io.pathnames sets vectors ;
+io.directories io.files.types io.pathnames sets vectors progress-bars math ;
+
 IN: rajdown
 
 TUPLE: progress count total percent ;
@@ -7,7 +8,13 @@ TUPLE: progress count total percent ;
 
 : <progress> ( count total -- progress ) 0 progress boa ;
 
+: progressStep ( seq progress -- progress seq ) swap [ count>> ] keep swap 1 + swap [ count<< ] keep ;
+
 : initProgress ( seq -- progress seq ) [ length ] keep swap 0 swap <progress> swap ;
+
+: setPercent ( progress -- progress )  [ count>> ] keep [ total>> ] keep [ / ] dip [ percent<< ] keep ;
+
+: drawProgressBar ( progress -- progress ) [ percent>> ] keep swap 90 make-progress-bar print ;
 
 : isPhotoThumb ( elt -- ? ) "class" swap at "photoThumb" = ;
 
