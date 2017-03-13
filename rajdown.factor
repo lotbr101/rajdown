@@ -12,7 +12,7 @@ TUPLE: progress count total percent ;
 
 : initProgress ( seq -- seq progress ) [ length ] keep swap 0 swap <progress> ;
 
-: setPercent ( progress -- progress )  [ count>> ] keep [ total>> ] keep [ / ] dip [ percent<< ] keep ;
+: setPercent ( progress -- progress ) [ [ count>> ] [ total>> ] bi ] keep [ / ] dip [ percent<< ] keep ;
 
 : drawProgressBar ( progress -- progress ) [ percent>> ] keep swap 60 make-progress-bar "%s\r" printf ;
 
