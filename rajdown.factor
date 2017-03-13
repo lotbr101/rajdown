@@ -1,6 +1,13 @@
 USING: kernel http.client html.parser sequences assocs accessors command-line namespaces
-    io.directories io.files.types io.pathnames sets vectors ;
+io.directories io.files.types io.pathnames sets vectors ;
 IN: rajdown
+
+TUPLE: progress count total percent ;
+
+
+: <progress> ( count total -- progress ) 0 progress boa ;
+
+: initProgress ( seq -- progress seq ) [ length ] keep swap 0 swap <progress> swap ;
 
 : isPhotoThumb ( elt -- ? ) "class" swap at "photoThumb" = ;
 
