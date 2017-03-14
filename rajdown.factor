@@ -1,5 +1,5 @@
 USING: kernel http.client html.parser sequences assocs accessors command-line namespaces
-io.directories io.files.types io.pathnames sets vectors progress-bars math io formatting ;
+io.directories io.files.types io.files.info io.pathnames sets vectors progress-bars math io formatting ;
 
 IN: rajdown
 
@@ -34,7 +34,7 @@ TUPLE: progress count total percent ;
 : processAddresses ( seq -- ) initProgress drawProgressBar swap [ download doProgressBar ] each drop ;
 
 ! local directory part
-: getDirectoryFiles (  -- seq ) "." directory-entries [ type>> +regular-file+ = ] filter ;
+: getDirectoryFiles (  -- seq ) "." directory-entries [ regular-file? ] filter ;
 
 : getDirectoryFileNames ( seq -- seq ) [ name>> ] map ;
 
