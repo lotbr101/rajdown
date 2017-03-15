@@ -3,6 +3,8 @@ io.directories io.files.types io.files.info io.pathnames sets vectors progress-b
 
 IN: rajdown
 
+<PRIVATE
+
 ! progress bar handling
 TUPLE: progress count total percent ;
 
@@ -50,6 +52,8 @@ TUPLE: progress count total percent ;
 : processUrl ( url -- ) createRemoteDirectoryVector  getPhotoUrlDirectory createLocalDirectoryVector
     diff
     processAddresses ;
+
+PRIVATE>
 
 : get-run ( -- ) command-line get first processUrl ;
 
