@@ -6,6 +6,6 @@ IN: rajdown.tests
 [ { { "class" "photoThumb" } } isPhotoThumb  ] unit-test
 
 { t }
-[ "a" "aaa" "test" f tag boa isLink ] unit-test
+[ "a" { { "class" "photoThumb" "href" "http://www.test.co.uk/test.jpg"} } "test image" f  tag boa isLink ] unit-test
 
 
